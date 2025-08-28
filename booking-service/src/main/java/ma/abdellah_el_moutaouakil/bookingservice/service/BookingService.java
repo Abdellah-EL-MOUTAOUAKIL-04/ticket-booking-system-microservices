@@ -1,7 +1,8 @@
 package ma.abdellah_el_moutaouakil.bookingservice.service;
 
-import ma.abdellah_el_moutaouakil.bookingservice.dtos.BookingDTO;
+import ma.abdellah_el_moutaouakil.bookingservice.dtos.BookingRequestDTO;
+import ma.abdellah_el_moutaouakil.bookingservice.dtos.BookingResponseDTO;
 
 public interface BookingService{
-    BookingDTO createBooking(BookingDTO bookingDTO);
+    BookingResponseDTO createBooking(BookingRequestDTO bookingDTO);
 }

@@ -16,7 +16,7 @@ public class Event {
     private String name;
     private Long totalCapacity;
     private Long leftCapacity;
-    private Long ticketPrice;
+    private Double ticketPrice;
     @ManyToOne
     @JoinColumn(name = "venue_id")
     private Venue venue;

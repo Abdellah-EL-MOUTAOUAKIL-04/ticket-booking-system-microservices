@@ -5,8 +5,9 @@ import lombok.Data;
 
 @Data
 @Builder
-public class BookingDTO {
+public class BookingResponseDTO {
     private Long userId;
     private Long eventId;
     private Long ticketCount;
+    private Double ticketPrice;
 }

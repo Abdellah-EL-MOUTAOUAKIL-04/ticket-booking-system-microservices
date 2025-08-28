@@ -1,9 +1,14 @@
 package ma.abdellah_el_moutaouakil.bookingservice.feign.model;
 
+import lombok.Data;
+import lombok.ToString;
+
+@Data
+@ToString
 public class Event {
-    private Long eventId;
+    private Long id;
     private String name;
-    private Long totalCapacity;
-    private Long ticketPrice;
+    private Long leftCapacity;
+    private Double ticketPrice;
     private Venue venue;
 }
