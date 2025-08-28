@@ -1,24 +1,20 @@
-package ma.abdellah_el_moutaouakil.inventoryservice.entities;
+package ma.abdellah_el_moutaouakil.bookingservice.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-public class Venue {
-    @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+public class Customer {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
-    private long totalCapacity;
+    private String email;
     private String address;
 }

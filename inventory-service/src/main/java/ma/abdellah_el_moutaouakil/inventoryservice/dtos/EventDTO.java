@@ -6,7 +6,9 @@ import lombok.Data;
 @Builder
 @Data
 public class EventDTO {
+    private Long eventId;
     private String name;
     private Long totalCapacity;
+    private Long ticketPrice;
     private VenueDTO venue;
 }

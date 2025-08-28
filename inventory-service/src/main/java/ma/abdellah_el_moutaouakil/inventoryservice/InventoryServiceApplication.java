@@ -9,6 +9,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.DependsOn;
 
 import java.util.UUID;
 
@@ -22,7 +23,8 @@ public class InventoryServiceApplication {
         SpringApplication.run(InventoryServiceApplication.class, args);
     }
 
-    @Bean
+    //@Bean
+    //@DependsOn("flyway")
     CommandLineRunner commandLineRunner(){
         return new CommandLineRunner() {
             @Override
