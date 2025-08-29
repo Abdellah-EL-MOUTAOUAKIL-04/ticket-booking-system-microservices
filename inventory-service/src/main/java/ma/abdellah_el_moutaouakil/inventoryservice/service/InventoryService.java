@@ -12,4 +12,6 @@ public interface InventoryService {
     Optional<EventDTO> getEvent(long eventId);
 
     Optional<VenueDTO> getVenue(long venueId);
+
+    void updateEventCpacity(Long eventId, Long ticketsBooked);
 }

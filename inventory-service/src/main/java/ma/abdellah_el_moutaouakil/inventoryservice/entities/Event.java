@@ -9,6 +9,7 @@ import lombok.*;
 @Builder
 @ToString
 @Getter
+@Setter
 public class Event {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

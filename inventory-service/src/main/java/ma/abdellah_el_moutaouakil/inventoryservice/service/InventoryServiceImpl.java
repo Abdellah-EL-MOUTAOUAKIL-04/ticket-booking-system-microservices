@@ -1,6 +1,7 @@
 package ma.abdellah_el_moutaouakil.inventoryservice.service;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import ma.abdellah_el_moutaouakil.inventoryservice.dtos.EventDTO;
 import ma.abdellah_el_moutaouakil.inventoryservice.dtos.VenueDTO;
 import ma.abdellah_el_moutaouakil.inventoryservice.entities.Event;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 @Transactional
 @Service
+@Slf4j
 public class InventoryServiceImpl implements InventoryService{
     @Autowired
     EventRepository eventRepository;
@@ -39,5 +41,13 @@ public class InventoryServiceImpl implements InventoryService{
     @Override
     public Optional<VenueDTO> getVenue(long venueId) {
         return venueRepository.findById(venueId).map(venueMapper::toDTO);
+    }
+
+    @Override
+    public void updateEventCpacity(Long eventId, Long ticketsBooked) {
+        Event event=eventRepository.findById(eventId).orElse(null);
+        event.setLeftCapacity(event.getLeftCapacity()-ticketsBooked);
+        eventRepository.saveAndFlush(event);
+        log.info("Updated event capacity for event id: {} with tickets booked: {}",eventId,ticketsBooked);
     }
 }
