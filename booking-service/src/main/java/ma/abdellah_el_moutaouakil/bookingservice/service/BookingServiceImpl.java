@@ -42,7 +42,12 @@ public class BookingServiceImpl implements BookingService {
 
         kafkaTemplate.send("booking",bookingEvent);
         log.info("Booking sent to Kafka : {}",bookingEvent);
-        return null;
+        return BookingResponseDTO.builder()
+                .userId(bookingEvent.getUserId())
+                .eventId(bookingEvent.getEventId())
+                .ticketCount(bookingEvent.getTicketCount())
+                .totalPrice(bookingEvent.getTotalPrice())
+                .build();
     }
 
     private BookingEvent createBookingEvent(BookingRequestDTO bookingRequestDTO, Customer customer, Event event) {

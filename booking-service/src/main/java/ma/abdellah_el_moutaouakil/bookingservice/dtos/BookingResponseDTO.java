@@ -9,5 +9,5 @@ public class BookingResponseDTO {
     private Long userId;
     private Long eventId;
     private Long ticketCount;
-    private Double ticketPrice;
+    private Double totalPrice;
 }
