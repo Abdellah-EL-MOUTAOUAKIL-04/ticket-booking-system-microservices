@@ -21,4 +21,9 @@ public class Venue {
     private String name;
     private long totalCapacity;
     private String address;
+    private boolean isActive;
+
+    public void setIsActive(boolean isActive){
+        this.isActive=isActive;
+    }
 }

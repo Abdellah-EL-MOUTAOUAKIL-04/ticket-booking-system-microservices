@@ -4,14 +4,27 @@ import ma.abdellah_el_moutaouakil.inventoryservice.dtos.EventDTO;
 import ma.abdellah_el_moutaouakil.inventoryservice.dtos.VenueDTO;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface InventoryService {
     public List<EventDTO> listEvents();
 
-    Optional<EventDTO> getEvent(long eventId);
+    EventDTO getEvent(long eventId);
 
-    Optional<VenueDTO> getVenue(long venueId);
+    EventDTO saveEvent(EventDTO eventDTO);
 
-    void updateEventCpacity(Long eventId, Long ticketsBooked);
+    EventDTO updateEvent(EventDTO eventDTO);
+
+    EventDTO updateEventCpacity(Long eventId, Long ticketsBooked);
+
+    VenueDTO getVenue(long venueId);
+
+    VenueDTO saveVenue(VenueDTO venueDTO);
+
+    void deleteVenue(Long venueId);
+
+    VenueDTO toggleVenue(Long venueId);
+
+    List<VenueDTO> getAllVenue();
+
+    VenueDTO updateVenue(VenueDTO venueDTO);
 }

@@ -1,0 +1,1 @@
+ALTER TABLE venue add column is_active boolean default true;
