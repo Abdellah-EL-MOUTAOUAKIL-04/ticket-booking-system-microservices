@@ -1,0 +1,13 @@
+<p-menubar [model]="items" class="custom-navbar">
+  <ng-template pTemplate="start">
+    <!-- Add content here if needed, e.g., a logo -->
+  </ng-template>
+
+  <ng-template pTemplate="end">
+    <div class="flex items-center gap-3">
+      <p-button icon="pi pi-bell" class="ui-button bell-button" [text]="true" severity="secondary" badge="2" badgeSeverity="danger"/>
+      <p-split-button icon="pi pi-user" class="ui-button" [text]="true" severity="secondary" [model]="profileItems"/>
+    </div>
+  </ng-template>
+</p-menubar>
+<router-outlet></router-outlet>
