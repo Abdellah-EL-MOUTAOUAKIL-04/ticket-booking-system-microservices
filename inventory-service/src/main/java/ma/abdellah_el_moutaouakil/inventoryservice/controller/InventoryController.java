@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin("*")
 public class InventoryController {
     @Autowired
     InventoryService inventoryService;
@@ -34,8 +35,8 @@ public class InventoryController {
         return ResponseEntity.created(URI.create("/inventory/events/"+createdEvent.getId())).body(createdEvent);
     }
 
-    @PutMapping("/inventory/events")
-    public ResponseEntity<EventDTO> updateEvent(@Valid @RequestBody EventDTO eventDTO){
+    @PutMapping("/inventory/events/{eventId}")
+    public ResponseEntity<EventDTO> updateEvent(@PathVariable int eventId,@Valid @RequestBody EventDTO eventDTO){
         EventDTO eventDTO1=inventoryService.updateEvent(eventDTO);
         return ResponseEntity.ok(eventDTO1);
     }
@@ -65,8 +66,8 @@ public class InventoryController {
     }
 
 
-    @PutMapping("/inventory/venue")
-    public ResponseEntity<VenueDTO> updateVenue(@Valid @RequestBody VenueDTO venueDTO){
+    @PutMapping("/inventory/venue/{venueId}")
+    public ResponseEntity<VenueDTO> updateVenue(@PathVariable long venueId,@Valid @RequestBody VenueDTO venueDTO){
         VenueDTO venueDTO1= inventoryService.updateVenue(venueDTO);
         return ResponseEntity.ok(venueDTO1);
     }
@@ -77,7 +78,7 @@ public class InventoryController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/inventory/venue/{venueId}/toggle")
+    @PatchMapping("/inventory/venue/{venueId}/toggle")
     public ResponseEntity<VenueDTO> toggleVenue(@PathVariable Long venueId){
         VenueDTO venueDTO=inventoryService.toggleVenue(venueId);
         return ResponseEntity.ok(venueDTO);

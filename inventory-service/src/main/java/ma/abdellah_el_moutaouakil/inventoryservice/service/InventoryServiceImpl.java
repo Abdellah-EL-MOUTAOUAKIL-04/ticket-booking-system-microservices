@@ -99,7 +99,8 @@ public class InventoryServiceImpl implements InventoryService{
             throw new ResourceNotFoundException("No venue exist with this id:"+venueId);
         Venue venue1=venue.get();
         venue1.setIsActive(!venue1.isActive());
-        return venueMapper.toDTO(venueRepository.saveAndFlush(venue1));
+        Venue venue2=venueRepository.saveAndFlush(venue1);
+        return venueMapper.toDTO(venue2);
     }
 
     @Override

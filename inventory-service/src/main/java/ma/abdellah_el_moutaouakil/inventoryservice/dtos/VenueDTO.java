@@ -15,5 +15,5 @@ public class VenueDTO {
     private long totalCapacity;
     @NotBlank(message = "Address is mandatory")
     private String address;
-    private boolean isActive;
+    private boolean active;
 }
