@@ -1,0 +1,215 @@
+<div class="p-4">
+  <p-data-view
+    #dv
+    [value]="events"
+    [layout]="'grid'"
+    [rows]="6"
+    [paginator]="true"
+    [rowsPerPageOptions]="[6, 12, 24]"
+  >
+    <ng-template #header>
+      <div class="surface-ground p-4 border-round mb-3">
+        <div class="flex flex-column lg:flex-row lg:justify-content-between lg:align-items-center">
+          <div class="flex flex-column gap-2">
+            <h1 class="text-3xl font-bold text-900 m-0">Event Management</h1>
+            <p class="text-600 m-0">Manage your events, capacity, and prices</p>
+          </div>
+          <div class="flex align-items-center gap-3 mt-3 lg:mt-0">
+            <div class="p-input-icon-left flex-auto lg:flex-none">
+              <input pInputText placeholder="Search events..." class="w-full lg:w-25rem" />
+            </div>
+            <p-button
+              icon="pi pi-plus"
+              label="Add Event"
+              severity="success"
+              (click)="openNewEvent()"
+              styleClass="p-button-raised"
+            ></p-button>
+          </div>
+        </div>
+      </div>
+
+      <p-dialog
+        header="{{ isEditMode ? 'Edit Event' : 'New Event' }}"
+        [(visible)]="showDialog"
+        [style]="{ width: '500px' }"
+        [modal]="true"
+        [closable]="true"
+        styleClass="p-fluid"
+        [draggable]="false"
+      >
+        <form [formGroup]="newEventForm" (ngSubmit)="handleForm()" class="flex flex-column gap-4">
+          <div class="field">
+            <label for="name" class="font-medium mb-2 block">Event Name</label>
+            <span class="p-input-icon-left w-full">
+              <i class="pi pi-ticket"></i>
+              <input
+                pInputText
+                id="name"
+                formControlName="name"
+                placeholder="Enter event name"
+                class="w-full"
+              />
+            </span>
+          </div>
+          <div class="field">
+            <label for="leftCapacity" class="font-medium mb-2 block">Available Capacity</label>
+            <span class="p-input-icon-left w-full">
+              <i class="pi pi-users"></i>
+              <p-inputnumber
+                id="leftCapacity"
+                formControlName="leftCapacity"
+                [showButtons]="true"
+                buttonLayout="horizontal"
+                spinnerMode="horizontal"
+                [min]="0"
+                [step]="10"
+                decrementButtonClass="p-button-danger"
+                incrementButtonClass="p-button-success"
+                incrementButtonIcon="pi pi-plus"
+                decrementButtonIcon="pi pi-minus"
+                placeholder="Enter available capacity"
+                class="w-full"
+              />
+            </span>
+          </div>
+          <div class="field">
+            <label for="ticketPrice" class="font-medium mb-2 block">Ticket Price</label>
+            <span class="p-input-icon-left w-full">
+              <i class="pi pi-dollar"></i>
+              <p-inputnumber
+                id="ticketPrice"
+                formControlName="ticketPrice"
+                mode="currency"
+                currency="USD"
+                [min]="0"
+                placeholder="Enter ticket price"
+                class="w-full"
+              />
+            </span>
+          </div>
+          <div class="flex justify-content-end gap-2 mt-4 pt-4 border-top-1 border-gray-200">
+            <p-button
+              label="Cancel"
+              (click)="handleCloseFormDialog()"
+              styleClass="p-button-outlined"
+              icon="pi pi-times"
+            ></p-button>
+            <p-button
+              [label]="isEditMode ? 'Update Event' : 'Create Event'"
+              type="submit"
+              [disabled]="newEventForm.invalid"
+              styleClass="p-button-primary"
+              icon="pi pi-check"
+            ></p-button>
+          </div>
+        </form>
+      </p-dialog>
+
+      <p-confirmdialog />
+    </ng-template>
+
+    <ng-template #grid let-items>
+      @if (isLoading) {
+      <div class="grid grid-nogutter md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div *ngFor="let i of [1, 2, 3, 4, 5, 6]" class="col-12 md:col-6 lg:col-4">
+          <p-card styleClass="h-full shadow-2">
+            <ng-template pTemplate="content">
+              <div class="flex flex-col gap-4">
+                <p-skeleton shape="rectangle" size="100%" styleClass="h-48"></p-skeleton>
+                <p-skeleton width="70%" height="2rem" styleClass="mb-2"></p-skeleton>
+                <p-skeleton width="90%" height="1rem" styleClass="mb-2"></p-skeleton>
+                <p-skeleton width="50%" height="2rem"></p-skeleton>
+                <div class="flex justify-content-between">
+                  <p-skeleton shape="circle" size="3rem" styleClass="mr-2"></p-skeleton>
+                  <p-skeleton shape="circle" size="3rem"></p-skeleton>
+                </div>
+              </div>
+            </ng-template>
+          </p-card>
+        </div>
+      </div>
+      } @else {
+      <div class="flex flex-wrap gap-4 px-2 m-2">
+        <div *ngFor="let item of items" class="flex-1 min-w-[350px]">
+          <div
+            class="surface-card border-round-xl shadow-2 h-full transform transition-all duration-200 hover:shadow-8"
+          >
+            <div class="relative overflow-hidden">
+              <img
+                class="w-full h-[200px] border-round-t-xl object-cover transform transition-transform hover:scale-105 duration-300"
+                [src]="
+                  'https://images.ctfassets.net/v7wr16nrr0mz/4aa4cvN73SlIqRPdbl0BDX/1e3c63b3f241093948fc4c888af21d38/populous_venue_productization_header-bowl.jpg'
+                "
+                [alt]="item.name"
+              />
+              <div class="absolute top-0 right-0 m-3">
+                <p-tag
+                  [value]="item.leftCapacity > 0 ? 'Available' : 'Sold Out'"
+                  [severity]="item.leftCapacity > 0 ? 'success' : 'danger'"
+                  [rounded]="true"
+                  styleClass="shadow-3"
+                ></p-tag>
+              </div>
+            </div>
+            <div class="p-4 flex flex-column gap-3">
+              <div class="flex flex-column gap-2">
+                <h3 class="text-xl font-bold m-0 text-900">{{ item.name }}</h3>
+                <div class="flex align-items-center text-600">
+                  <i class="pi pi-map-marker mr-2"></i>
+                  <span class="line-clamp-1">{{ item.venue?.name }}</span>
+                </div>
+              </div>
+              <div class="flex gap-3">
+                <div
+                  class="surface-ground px-4 py-3 border-round-2xl inline-flex align-items-center"
+                >
+                  <i class="pi pi-users text-xl mr-2 text-primary"></i>
+                  <span class="font-semibold text-primary text-xl">{{ item.leftCapacity }}</span>
+                  <span class="text-500 ml-2">seats left</span>
+                </div>
+                <div
+                  class="surface-ground px-4 py-3 border-round-2xl inline-flex align-items-center"
+                >
+                  <i class="pi pi-dollar text-xl mr-2 text-primary"></i>
+                  <span class="font-semibold text-primary text-xl">{{ item.ticketPrice }}</span>
+                </div>
+              </div>
+              <div class="flex justify-content-between mt-3 pt-3 border-top-1 surface-border">
+                <div class="flex gap-2">
+                  <p-button
+                    icon="pi pi-pencil"
+                    severity="warn"
+                    (click)="editEvent(item)"
+                    pTooltip="Edit Event"
+                    tooltipPosition="top"
+                    class="p-button-rounded p-button-sm"
+                  />
+                  <p-button
+                    icon="pi pi-trash"
+                    severity="danger"
+                    (click)="confirmDelete(item)"
+                    pTooltip="Delete Event"
+                    tooltipPosition="top"
+                    class="p-button-rounded p-button-sm"
+                  />
+                </div>
+                <p-button
+                  label="Book Event"
+                  icon="pi pi-ticket"
+                  [disabled]="item.leftCapacity === 0"
+                  (click)="bookEvent(item)"
+                  pTooltip="{{ item.leftCapacity > 0 ? 'Book this event' : 'Sold out' }}"
+                  tooltipPosition="top"
+                  severity="success"
+                  class="p-button-sm"
+                ></p-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+    </ng-template>
+  </p-data-view>
+</div>

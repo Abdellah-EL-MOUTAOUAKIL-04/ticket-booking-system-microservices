@@ -12,12 +12,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { SelectButtonModule } from 'primeng/selectbutton';
-import { NgClass, NgForOf } from '@angular/common';
+import { NgForOf } from '@angular/common';
 import { Skeleton } from 'primeng/skeleton';
 import { Button } from 'primeng/button';
 import { Tag } from 'primeng/tag';
-import { Splitter } from 'primeng/splitter';
-import { ToggleSwitch } from 'primeng/toggleswitch';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { InputNumber, InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
@@ -25,20 +23,19 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'app-venues',
   imports: [
     DataView,
+    CardModule,
     FormsModule,
     SelectButtonModule,
-    NgClass,
     Skeleton,
     Button,
     Tag,
     NgForOf,
-    Splitter,
-    ToggleSwitch,
     ToggleButtonModule,
     ReactiveFormsModule,
     InputNumber,
@@ -73,6 +70,7 @@ export class Venues implements OnInit {
     private fb: FormBuilder
   ) {
     this.newVenueForm = this.fb.group({
+      id: [''],
       name: ['', Validators.required],
       totalCapacity: [0, Validators.required],
       address: ['', Validators.required],
@@ -111,6 +109,7 @@ export class Venues implements OnInit {
     this.isEditMode = true;
     this.showDialog = true;
     this.newVenueForm.patchValue({
+      id: venue.id,
       name: venue.name,
       totalCapacity: venue.totalCapacity,
       address: venue.address,
@@ -120,13 +119,12 @@ export class Venues implements OnInit {
   handleUpdateVenue() {
     if (this.newVenueForm.valid) {
       const updatedVenue: Venue = {
-        id: 0,
+        id: this.newVenueForm.value.id,
         name: this.newVenueForm.value.name,
         totalCapacity: this.newVenueForm.value.totalCapacity,
         address: this.newVenueForm.value.address,
         active: this.newVenueForm.value.active,
       };
-      console.log('updatedVenue', updatedVenue);
       this.venueService.updateVenue(updatedVenue, updatedVenue.id).subscribe({
         next: (data) => {
           const index = this.venues.findIndex((v) => v.id === data.id);
@@ -166,6 +164,7 @@ export class Venues implements OnInit {
   openNewVenue() {
     this.showDialog = true;
   }
+
   handleCreateVenue() {
     if (this.newVenueForm.valid) {
       const newVenue: Venue = {
@@ -175,7 +174,6 @@ export class Venues implements OnInit {
         address: this.newVenueForm.value.address,
         active: this.newVenueForm.value.active,
       };
-      console.log('newVenue', newVenue);
       this.venueService.saveVenue(newVenue).subscribe({
         next: (data) => {
           this.venues.push(data);
@@ -187,6 +185,16 @@ export class Venues implements OnInit {
     }
   }
 
+  handleForm() {
+    this.isEditMode ? this.handleUpdateVenue() : this.handleCreateVenue();
+  }
+  handleCloseFormDialog() {
+    if (this.isEditMode) {
+      this.isEditMode = false;
+    }
+    this.showDialog = false;
+    this.newVenueForm.reset();
+  }
   applyFilters() {}
 
   resetFilters() {}

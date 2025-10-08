@@ -4,9 +4,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 @Builder
 @Data
+@ToString
 public class VenueDTO {
     private long id;
     @NotBlank(message = "Name is mandatory")

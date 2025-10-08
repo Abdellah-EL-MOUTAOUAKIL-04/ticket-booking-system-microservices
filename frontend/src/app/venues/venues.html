@@ -1,270 +1,227 @@
-<p-splitter [panelSizes]="[75, 25]" [style]="{ border: 'none' }" styleClass="border-none p-0">
-  <ng-template #panel>
-    <p-data-view
-      #dv
-      [value]="venues"
-      [layout]="layout"
-      [rows]="6"
-      [paginator]="true"
-      [rowsPerPageOptions]="[6, 12, 24]"
-    >
-      <ng-template #header>
-        <div class="flex flex-wrap justify-between items-center gap-3">
-          <!-- Layout Toggle -->
-          <div>
-            <p-select-button [(ngModel)]="layout" [options]="layoutOptions" [allowEmpty]="false">
-              <ng-template #item let-option>
-                <i [class]="option === 'list' ? 'pi pi-bars' : 'pi pi-table'"></i>
-              </ng-template>
-            </p-select-button>
+<div class="p-4">
+  <p-data-view
+    #dv
+    [value]="venues"
+    [layout]="layout"
+    [rows]="6"
+    [paginator]="true"
+    [rowsPerPageOptions]="[6, 12, 24]"
+  >
+    <ng-template #header>
+      <div class="surface-ground p-4 border-round mb-3">
+        <div class="flex flex-column lg:flex-row lg:justify-content-between lg:align-items-center">
+          <div class="flex flex-column gap-2">
+            <h1 class="text-3xl font-bold text-900 m-0">Venue Management</h1>
+            <p class="text-600 m-0">Manage your venues, capacities, and availability</p>
           </div>
-          <div class="flex gap-2">
+          <div class="flex align-items-center gap-3 mt-3 lg:mt-0">
+            <div class="p-input-icon-left flex-auto lg:flex-none">
+              <input pInputText placeholder="Search venues..." class="w-full lg:w-25rem" />
+            </div>
+            <p-selectButton
+              [(ngModel)]="layout"
+              [options]="layoutOptions"
+              [allowEmpty]="false"
+              styleClass="mb-0"
+            >
+              <ng-template #item let-option>
+                <i [class]="option === 'list' ? 'pi pi-bars' : 'pi pi-table'" class="text-xl"></i>
+              </ng-template>
+            </p-selectButton>
             <p-button
               icon="pi pi-plus"
               label="Add Venue"
-              styleClass="p-button-success"
+              severity="success"
               (click)="openNewVenue()"
+              styleClass="p-button-raised"
             ></p-button>
           </div>
         </div>
-        <p-dialog
-          header="{{ isEditMode ? 'Edit Venue' : 'New Venue' }}"
-          [(visible)]="showDialog"
-          [style]="{ width: '400px' }"
-          [modal]="true"
-          [closable]="true"
-        >
-          <form [formGroup]="newVenueForm" (ngSubmit)="handleCreateVenue()">
-            <div class="field">
-              <label for="name">Name</label>
-              <input pInputText id="name" formControlName="name" />
-            </div>
-            <div class="field">
-              <label for="totalCapacity">Total Capacity</label>
-              <p-inputnumber id="totalCapacity" formControlName="totalCapacity" type="number" />
-            </div>
-            <div class="field">
-              <label for="address">Address</label>
-              <input pInputText id="address" formControlName="address" />
-            </div>
-            <div class="field">
-              <label for="active">Active</label>
-              <p-toggle-switch id="active" formControlName="active" />
-            </div>
-            <div class="flex flex-row justify-end gap-2">
-              <p-button label="Cancel" (click)="showDialog = false"></p-button>
-              <p-button
-                label="{{ isEditMode ? 'Update' : 'Create' }}"
-                type="submit"
-                [disabled]="newVenueForm.invalid"
-              ></p-button>
-            </div>
-          </form>
-        </p-dialog>
-        <p-confirmdialog />
-      </ng-template>
+      </div>
+      <p-dialog
+        header="{{ isEditMode ? 'Edit Venue' : 'New Venue' }}"
+        [(visible)]="showDialog"
+        [style]="{ width: '500px' }"
+        [modal]="true"
+        [closable]="true"
+        styleClass="p-fluid"
+        [draggable]="false"
+      >
+        <form [formGroup]="newVenueForm" (ngSubmit)="handleForm()">
+          <div class="field">
+            <label for="name">Venue Name</label>
+            <input pInputText id="name" formControlName="name" placeholder="Enter venue name" />
+          </div>
+          <div class="field">
+            <label for="totalCapacity">Total Capacity</label>
+            <p-inputnumber
+              id="totalCapacity"
+              formControlName="totalCapacity"
+              [showButtons]="true"
+              buttonLayout="horizontal"
+              spinnerMode="horizontal"
+              [min]="0"
+              [step]="10"
+              decrementButtonClass="p-button-danger"
+              incrementButtonClass="p-button-success"
+              incrementButtonIcon="pi pi-plus"
+              decrementButtonIcon="pi pi-minus"
+              placeholder="Enter capacity"
+            />
+          </div>
+          <div class="field">
+            <label for="address">Address</label>
+            <input
+              pInputText
+              id="address"
+              formControlName="address"
+              placeholder="Enter venue address"
+            />
+          </div>
+          <div class="field">
+            <label for="active">Status</label>
+            <p-selectbutton
+              id="active"
+              formControlName="active"
+              [options]="[
+                { label: 'Active', value: true },
+                { label: 'Inactive', value: false }
+              ]"
+              optionLabel="label"
+              optionValue="value"
+            >
+              <ng-template let-item>
+                <i
+                  [class]="
+                    item.value
+                      ? 'pi pi-check-circle text-green-500'
+                      : 'pi pi-times-circle text-red-500'
+                  "
+                  class="mr-2"
+                ></i>
+                {{ item.label }}
+              </ng-template>
+            </p-selectbutton>
+          </div>
+          <div class="flex justify-content-end gap-2 mt-4 pt-4 border-top-1 border-gray-200">
+            <p-button
+              label="Cancel"
+              (click)="handleCloseFormDialog()"
+              styleClass="p-button-outlined"
+              icon="pi pi-times"
+            ></p-button>
+            <p-button
+              [label]="isEditMode ? 'Update Venue' : 'Create Venue'"
+              type="submit"
+              [disabled]="newVenueForm.invalid"
+              styleClass="p-button-primary"
+              icon="pi pi-check"
+            ></p-button>
+          </div>
+        </form>
+      </p-dialog>
+      <p-confirmdialog />
+    </ng-template>
 
-      <!-- LIST LAYOUT -->
-      <ng-template #list let-items>
-        @if (isLoading) {
-        <div class="flex flex-col">
-          <div *ngFor="let i of [1, 2, 3, 4]">
-            <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-3">
-              <p-skeleton class="!w-40 !h-24" />
-              <div
-                class="flex flex-col sm:flex-row justify-between items-start sm:items-center flex-1 gap-6"
-              >
-                <div class="flex flex-col gap-2 w-full sm:w-auto">
-                  <p-skeleton width="10rem" height="1.5rem" />
-                  <p-skeleton width="15rem" height="1rem" />
-                  <p-skeleton width="5rem" height="2rem" />
-                </div>
-                <div class="flex flex-row gap-2 min-w-[180px] justify-end mt-4 sm:mt-0">
-                  <p-skeleton width="8rem" height="2.5rem" />
-                  <p-skeleton width="2.5rem" height="2.5rem" />
+    <!-- LIST LAYOUT -->
+    <ng-template #list let-items>
+      <div>list layout</div>
+    </ng-template>
+
+    <!-- GRID LAYOUT -->
+    <ng-template #grid let-items>
+      @if (isLoading) {
+      <div class="grid grid-nogutter md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div *ngFor="let i of [1, 2, 3, 4, 5, 6]" class="col-12 md:col-6 lg:col-4">
+          <p-card styleClass="h-full shadow-2">
+            <ng-template pTemplate="content">
+              <div class="flex flex-col gap-4">
+                <p-skeleton shape="rectangle" size="100%" styleClass="h-48"></p-skeleton>
+                <p-skeleton width="70%" height="2rem" styleClass="mb-2"></p-skeleton>
+                <p-skeleton width="90%" height="1rem" styleClass="mb-2"></p-skeleton>
+                <p-skeleton width="50%" height="2rem"></p-skeleton>
+                <div class="flex justify-content-between">
+                  <p-skeleton shape="circle" size="3rem" styleClass="mr-2"></p-skeleton>
+                  <p-skeleton shape="circle" size="3rem" styleClass="mr-2"></p-skeleton>
+                  <p-skeleton shape="circle" size="3rem"></p-skeleton>
                 </div>
               </div>
-            </div>
-          </div>
+            </ng-template>
+          </p-card>
         </div>
-        } @else {
-        <div class="grid grid-cols-1 gap-4 grid-nogutter">
-          <div *ngFor="let item of items">
-            <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4">
-              <!-- Image -->
-              <div class="md:w-32 relative">
-                <img
-                  class="block mx-auto rounded-border w-full h-24 object-cover"
-                  [src]="
-                    'https://images.ctfassets.net/v7wr16nrr0mz/4aa4cvN73SlIqRPdbl0BDX/1e3c63b3f241093948fc4c888af21d38/populous_venue_productization_header-bowl.jpg'
-                  "
-                  [alt]="item.name"
-                />
+      </div>
+      } @else {
+      <div class="flex flex-wrap gap-4 px-2">
+        <div *ngFor="let item of items" class="flex-1 min-w-[350px]">
+          <div
+            class="surface-card border-round-xl shadow-2 h-full transform transition-all duration-200 hover:shadow-8"
+          >
+            <div class="relative overflow-hidden">
+              <img
+                class="w-full h-[200px] border-round-t-xl object-cover transform transition-transform hover:scale-105 duration-300"
+                [src]="
+                  'https://images.ctfassets.net/v7wr16nrr0mz/4aa4cvN73SlIqRPdbl0BDX/1e3c63b3f241093948fc4c888af21d38/populous_venue_productization_header-bowl.jpg'
+                "
+                [alt]="item.name"
+              />
+              <div class="absolute top-0 right-0 m-3">
                 <p-tag
                   [value]="item.active ? 'Active' : 'Inactive'"
                   [severity]="item.active ? 'success' : 'danger'"
-                  class="absolute dark:!bg-surface-900"
-                  [style.right.px]="4"
-                  [style.top.px]="4"
-                >
-                </p-tag>
+                  [rounded]="true"
+                  styleClass="shadow-3"
+                ></p-tag>
+              </div>
+            </div>
+            <div class="p-4 flex flex-column gap-3">
+              <div class="flex flex-column gap-2">
+                <h3 class="text-xl font-bold m-0 text-900">{{ item.name }}</h3>
+                <div class="flex align-items-center text-600">
+                  <i class="pi pi-map-marker mr-2"></i>
+                  <span class="line-clamp-1">{{ item.address }}</span>
+                </div>
               </div>
               <div
-                class="flex flex-col sm:flex-row justify-between items-start sm:items-center flex-1 gap-6"
+                class="surface-ground px-4 py-3 border-round-2xl inline-flex align-items-center w-fit"
               >
-                <div class="flex flex-col gap-2">
-                  <div>
-                    <span class="font-medium text-secondary text-sm">{{ item.address }}</span>
-                    <div class="text-lg font-medium text-surface-900 dark:text-surface-0 mt-2">
-                      {{ item.name }}
-                    </div>
-                  </div>
-                  <div class="bg-surface-100 dark:bg-surface-700 p-1 rounded-3xl self-start">
-                    <div
-                      class="bg-surface-0 dark:bg-surface-900 flex items-center gap-2 py-1 px-2 rounded-3xl"
-                    >
-                      <i class="pi pi-users"></i>
-                      <span class="text-surface-900 dark:text-surface-0 font-medium text-sm">
-                        {{ item.totalCapacity }}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div class="flex flex-row gap-2 min-w-[180px] justify-end mt-4 sm:mt-0">
-                  <p-button
-                    icon="pi pi-pencil"
-                    styleClass="p-button-warning"
-                    (click)="editVenue(item)"
-                  ></p-button>
-                  <p-button
-                    icon="pi pi-trash"
-                    styleClass="p-button-danger"
-                    (click)="confirmDelete(item)"
-                  ></p-button>
-                  <p-toggle-button
-                    [(ngModel)]="item.active"
-                    onLabel="Active"
-                    offLabel="Inactive"
-                    onIcon="pi pi-lock"
-                    offIcon="pi pi-lock-open"
-                    class="w-36"
-                  />
-                </div>
+                <i class="pi pi-users text-xl mr-2 text-primary"></i>
+                <span class="font-semibold text-primary text-xl">{{ item.totalCapacity }}</span>
+                <span class="text-500 ml-2">seats</span>
               </div>
-            </div>
-          </div>
-        </div>
-        }
-      </ng-template>
-
-      <!-- GRID LAYOUT -->
-      <ng-template #grid let-items>
-        @if (isLoading) {
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 m-4">
-          <div *ngFor="let i of [1, 2, 3, 4]" class="p-2">
-            <div
-              class="p-6 border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 rounded h-full flex flex-col"
-            >
-              <div class="mb-4 flex-grow">
-                <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-                  <p-skeleton width="8rem" height="1.5rem" />
-                  <p-skeleton width="4rem" height="1.5rem" />
-                </div>
-                <div class="flex flex-col gap-4 py-4">
-                  <p-skeleton class="!w-full !h-40" />
-                  <p-skeleton width="15rem" height="1rem" />
-                  <p-skeleton width="5rem" height="2rem" />
-                </div>
-              </div>
-              <div class="flex gap-2 mt-auto pt-4">
-                <p-skeleton width="100%" height="2.5rem" />
-                <p-skeleton width="2.5rem" height="2.5rem" />
-              </div>
-            </div>
-          </div>
-        </div>
-        } @else {
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 m-4">
-          <div *ngFor="let item of items" class="p-2">
-            <div
-              class="p-6 border border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 rounded h-full flex flex-col"
-            >
-              <div class="mb-4 flex-grow">
-                <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-                  <div class="text-lg font-medium text-surface-900 dark:text-surface-0">
-                    {{ item.name }}
-                  </div>
-                  <p-tag
-                    [value]="item.active ? 'Active' : 'Inactive'"
-                    [severity]="item.active ? 'success' : 'danger'"
-                  ></p-tag>
-                </div>
-                <div class="flex flex-col gap-4 py-4">
-                  <div class="w-full relative">
-                    <img
-                      class="rounded-border w-full h-40 object-cover"
-                      [src]="
-                        'https://images.ctfassets.net/v7wr16nrr0mz/4aa4cvN73SlIqRPdbl0BDX/1e3c63b3f241093948fc4c888af21d38/populous_venue_productization_header-bowl.jpg'
-                      "
-                      [alt]="item.name"
-                    />
-                    <p-tag
-                      [value]="item.active ? 'Active' : 'Inactive'"
-                      [severity]="item.active ? 'success' : 'danger'"
-                      class="absolute dark:!bg-surface-900"
-                      [style.right.px]="4"
-                      [style.top.px]="4"
-                    >
-                    </p-tag>
-                  </div>
-                  <span class="text-secondary text-sm w-full text-left">{{ item.address }}</span>
-                  <div class="bg-surface-100 dark:bg-surface-700 p-1 rounded-3xl self-start">
-                    <div
-                      class="bg-surface-0 dark:bg-surface-900 flex items-center gap-2 py-1 px-3 rounded-3xl"
-                    >
-                      <i class="pi pi-users"></i>
-                      <span class="text-surface-900 dark:text-surface-0 font-medium text-sm">
-                        {{ item.totalCapacity }}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="flex gap-2 mt-auto pt-4">
-                <div class="flex gap-2 flex-1">
-                  <p-button
-                    icon="pi pi-pencil"
-                    styleClass="p-button-warning p-button-sm"
-                    (click)="editVenue(item)"
-                  ></p-button>
-                  <p-button
-                    icon="pi pi-trash"
-                    styleClass="p-button-danger p-button-sm"
-                    (click)="confirmDelete(item)"
-                  ></p-button>
-                </div>
+              <div class="flex justify-content-between mt-3 pt-3 border-top-1 surface-border">
                 <div class="flex gap-2">
-                  <p-toggle-button
-                    [(ngModel)]="item.active"
-                    onLabel="Active"
-                    offLabel="Inactive"
-                    onIcon="pi pi-lock"
-                    offIcon="pi pi-lock-open"
-                    class="w-36"
+                  <p-button
+                    icon="pi pi-pencil"
+                    severity="warn"
+                    (click)="editVenue(item)"
+                    pTooltip="Edit Venue"
+                    tooltipPosition="top"
+                    class="p-button-rounded p-button-sm"
+                  />
+                  <p-button
+                    icon="pi pi-trash"
+                    severity="danger"
+                    (click)="confirmDelete(item)"
+                    pTooltip="Delete Venue"
+                    tooltipPosition="top"
+                    class="p-button-rounded p-button-sm"
                   />
                 </div>
+                <p-togglebutton
+                  [(ngModel)]="item.active"
+                  onLabel="Active"
+                  offLabel="Inactive"
+                  onIcon="pi pi-check"
+                  offIcon="pi pi-times"
+                  class="w-36"
+                  ariaLabel="Do you confirm"
+                />
               </div>
             </div>
           </div>
         </div>
-        }
-      </ng-template>
-    </p-data-view>
-  </ng-template>
-
-  <ng-template #panel>
-    <div class="p-4 flex flex-col gap-4 w-full">
-      <p-button label="Apply Filters" icon="pi pi-filter" class="mt-2 w-full"></p-button>
-    </div>
-  </ng-template>
-</p-splitter>
+      </div>
+      }
+    </ng-template>
+  </p-data-view>
+</div>
