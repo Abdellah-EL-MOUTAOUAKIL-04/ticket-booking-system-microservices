@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Event } from '../model/event.model';
 import { EventService } from '../../services/event-service';
+import { BookingService } from '../../services/booking-service';
 import { finalize } from 'rxjs';
 import { DataView } from 'primeng/dataview';
 import {
@@ -57,9 +58,13 @@ export class Events implements OnInit {
   newEventForm: FormGroup;
   showDialog: boolean = false;
   isEditMode: boolean = false;
+  showBookingDialog: boolean = false;
+  selectedEvent: Event | null = null;
+  numberOfTickets: number = 1;
 
   constructor(
     private eventService: EventService,
+    private bookingService: BookingService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private fb: FormBuilder
@@ -176,21 +181,58 @@ export class Events implements OnInit {
 
   bookEvent(event: Event) {
     if (event.leftCapacity > 0) {
-      this.confirmationService.confirm({
-        message: 'Are you sure you want to book a ticket for this event?',
-        header: 'Confirm Booking',
-        icon: 'pi pi-ticket',
-        accept: () => {
-          // Here you would typically call a booking service
-          // For now we'll just show a success message
+      this.selectedEvent = event;
+      this.numberOfTickets = 1;
+      this.showBookingDialog = true;
+    }
+  }
+
+  confirmBooking() {
+    if (
+      this.selectedEvent &&
+      this.numberOfTickets > 0 &&
+      this.numberOfTickets <= this.selectedEvent.leftCapacity
+    ) {
+      const bookingData = {
+        userId: 1,
+        eventId: this.selectedEvent.id,
+        ticketCount: this.numberOfTickets,
+      };
+
+      this.bookingService.createBooking(bookingData).subscribe({
+        next: (response) => {
+          // Update the event's capacity
+          this.selectedEvent!.leftCapacity -= this.numberOfTickets;
+          const index = this.events.findIndex((e) => e.id === this.selectedEvent!.id);
+          if (index !== -1) {
+            this.events[index] = { ...this.selectedEvent! };
+          }
+
           this.messageService.add({
             severity: 'success',
             summary: 'Booking Confirmed',
-            detail: `Successfully booked a ticket for ${event.name}`,
+            detail: `Successfully booked ${this.numberOfTickets} ticket(s) for ${
+              this.selectedEvent!.name
+            }`,
+            life: 3000,
+          });
+          this.closeBookingDialog();
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Booking Failed',
+            detail: 'Failed to book tickets. Please try again.',
             life: 3000,
           });
         },
       });
     }
+  }
+
+  closeBookingDialog() {
+    this.showBookingDialog = false;
+    this.selectedEvent = null;
+    this.numberOfTickets = 1;
   }
 }

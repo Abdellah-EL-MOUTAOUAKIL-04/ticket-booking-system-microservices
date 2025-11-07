@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Slf4j
 public class OrderServiceImpl implements OrderService{
@@ -19,7 +21,7 @@ public class OrderServiceImpl implements OrderService{
 
     @KafkaListener(topics = "booking",groupId = "order-service")
     public void orderEvent(BookingEvent bookingEvent){
-        log.info("Received order event: {}",bookingEvent);
+        //log.info("Received order event: {}",bookingEvent);
 
         Order order=createOrder(bookingEvent);
 
@@ -27,7 +29,7 @@ public class OrderServiceImpl implements OrderService{
 
         inventoryRestClient.updateInventory(order.getEventId(),order.getTicketCount());
 
-        log.info("Inventory updated for event : {}, less tickets: {}",order.getEventId(),order.getTicketCount());
+        //log.info("Inventory updated for event : {}, less tickets: {}",order.getEventId(),order.getTicketCount());
     }
     private Order createOrder(BookingEvent bookingEvent){
         return Order.builder()
@@ -36,5 +38,10 @@ public class OrderServiceImpl implements OrderService{
                 .ticketCount(bookingEvent.getTicketCount())
                 .totalPrice(bookingEvent.getTotalPrice())
                 .build();
+    }
+
+    @Override
+    public List<Order> findAllBookings() {
+        return orderRepository.findAll();
     }
 }

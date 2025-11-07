@@ -107,6 +107,63 @@
       </p-dialog>
 
       <p-confirmdialog />
+
+      <!-- Booking Dialog -->
+      <p-dialog
+        header="Book Tickets"
+        [(visible)]="showBookingDialog"
+        [style]="{ width: '400px' }"
+        [modal]="true"
+        [closable]="true"
+        styleClass="p-fluid"
+        [draggable]="false"
+      >
+        <div class="flex flex-column gap-4">
+          <div *ngIf="selectedEvent" class="flex flex-column gap-2">
+            <h3 class="m-0">{{ selectedEvent.name }}</h3>
+            <p class="text-600 m-0">Available tickets: {{ selectedEvent.leftCapacity }}</p>
+            <p class="text-600 m-0">Price per ticket: ${{ selectedEvent.ticketPrice }}</p>
+          </div>
+          <div class="field">
+            <label for="numberOfTickets" class="font-medium mb-2 block">Number of Tickets</label>
+            <span class="p-input-icon-left w-full">
+              <i class="pi pi-ticket"></i>
+              <p-inputNumber
+                id="numberOfTickets"
+                [(ngModel)]="numberOfTickets"
+                [showButtons]="true"
+                buttonLayout="horizontal"
+                spinnerMode="horizontal"
+                [min]="1"
+                [max]="selectedEvent?.leftCapacity || 1"
+                [step]="1"
+                decrementButtonClass="p-button-danger"
+                incrementButtonClass="p-button-success"
+                incrementButtonIcon="pi pi-plus"
+                decrementButtonIcon="pi pi-minus"
+                class="w-full"
+              ></p-inputNumber>
+            </span>
+          </div>
+          <div *ngIf="selectedEvent" class="text-right">
+            <p class="font-bold">Total: ${{ numberOfTickets * selectedEvent.ticketPrice }}</p>
+          </div>
+          <div class="flex justify-content-end gap-2">
+            <p-button
+              label="Cancel"
+              (click)="closeBookingDialog()"
+              styleClass="p-button-outlined"
+              icon="pi pi-times"
+            ></p-button>
+            <p-button
+              label="Confirm Booking"
+              (click)="confirmBooking()"
+              styleClass="p-button-success"
+              icon="pi pi-check"
+            ></p-button>
+          </div>
+        </div>
+      </p-dialog>
     </ng-template>
 
     <ng-template #grid let-items>

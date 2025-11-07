@@ -1,13 +1,12 @@
 package ma.abdellah_el_moutaouakil.bookingservice.event;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Builder
 public class BookingEvent {
     private Long userId;

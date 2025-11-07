@@ -1,1 +1,119 @@
-<p>bookings works!</p>
+<div class="p-4">
+  <div class="surface-ground p-4 border-round mb-3">
+    <div class="flex flex-column gap-2">
+      <h1 class="text-3xl font-bold text-900 m-0">My Bookings</h1>
+      <p class="text-600 m-0">View all your event bookings</p>
+    </div>
+  </div>
+
+  @if (isLoading) {
+  <div class="surface-card p-4 border-round shadow-2">
+    <p-skeleton height="2rem" styleClass="mb-4"></p-skeleton>
+    <p-skeleton height="12rem"></p-skeleton>
+  </div>
+  } @else {
+  <p-table
+    #dt
+    [value]="bookings"
+    [rows]="10"
+    [paginator]="true"
+    [rowsPerPageOptions]="[5, 10, 25]"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} bookings"
+    [tableStyle]="{ 'min-width': '60rem' }"
+    styleClass="p-datatable-striped p-datatable-gridlines p-datatable-sm"
+    [globalFilterFields]="['id', 'eventId', 'ticketCount', 'totalPrice']"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex justify-content-between align-items-center">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            placeholder="Search bookings..."
+            (input)="dt.filterGlobal($event.target.value, 'contains')"
+            class="w-full sm:w-auto"
+          />
+        </span>
+        <p-button
+          icon="pi pi-refresh"
+          (onClick)="loadBookings()"
+          severity="help"
+          [rounded]="true"
+          [text]="true"
+        ></p-button>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="id" style="width: 15%">
+          Booking ID
+          <p-sortIcon field="id"></p-sortIcon>
+        </th>
+        <th pSortableColumn="eventId" style="width: 15%">
+          Event ID
+          <p-sortIcon field="eventId"></p-sortIcon>
+        </th>
+        <th pSortableColumn="ticketCount" style="width: 20%">
+          Tickets
+          <p-sortIcon field="ticketCount"></p-sortIcon>
+        </th>
+        <th pSortableColumn="totalPrice" style="width: 20%">
+          Total Price
+          <p-sortIcon field="totalPrice"></p-sortIcon>
+        </th>
+        <th pSortableColumn="placedAt" style="width: 30%">
+          Booking Date
+          <p-sortIcon field="placedAt"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-booking>
+      <tr>
+        <td>
+          <span class="font-bold">#{{ booking.id }}</span>
+        </td>
+        <td>
+          <span class="text-primary">{{ booking.eventId }}</span>
+        </td>
+        <td>
+          <p-tag
+            [value]="booking.ticketCount.toString()"
+            [severity]="booking.ticketCount > 10 ? 'warning' : 'info'"
+            [rounded]="true"
+          ></p-tag>
+        </td>
+        <td>
+          <span class="font-bold text-green-600"> ${{ booking.totalPrice }} </span>
+        </td>
+        <td>
+          <div class="flex flex-column">
+            <span>{{ booking.placedAt | date : 'MMM d, y' }}</span>
+            <span class="text-sm text-600">{{ booking.placedAt | date : 'h:mm a' }}</span>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <div class="surface-section px-4 py-5 md:px-6 lg:px-8">
+        <div class="flex flex-column align-items-center">
+          <i class="pi pi-ticket text-6xl text-600 mb-4"></i>
+          <h2 class="text-900 font-bold text-4xl m-0 mb-2">No Bookings Found</h2>
+          <p class="text-600 text-center mb-4">
+            You haven't made any bookings yet. Check out our events and book your tickets!
+          </p>
+          <p-button
+            label="Browse Events"
+            routerLink="/events"
+            styleClass="p-button-primary"
+          ></p-button>
+        </div>
+      </div>
+    </ng-template>
+  </p-table>
+  }
+</div>
